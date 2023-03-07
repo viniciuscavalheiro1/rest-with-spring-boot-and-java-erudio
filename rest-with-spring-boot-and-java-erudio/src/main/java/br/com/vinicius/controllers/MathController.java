@@ -2,6 +2,8 @@ package br.com.vinicius.controllers;
 
 import br.com.vinicius.domain.Greeting;
 import br.com.vinicius.exceptions.UnsupportedMathOperationException;
+import br.com.vinicius.services.MathService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -9,15 +11,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/calculadora")
 public class MathController {
 
+    private final MathService mathService;
+
+    public MathController(MathService mathService) {
+        this.mathService = mathService;
+    }
+
     @RequestMapping(path = "/sum/{numberOne}/{numberTwo}", method = RequestMethod.GET)
     public Double sum(
             @PathVariable(value = "numberOne") String numberOne,
             @PathVariable(value = "numberTwo") String numberTwo
         ) throws Exception {
-        if(!isNumeric(numberOne) || !isNumeric(numberTwo)) {
-            throw new UnsupportedMathOperationException("Please set a numeric value!");
-        }
-       return ConvertToDouble(numberOne) + ConvertToDouble(numberTwo);
+        return mathService.Soma(numberOne, numberTwo);
     }
 
     @RequestMapping(path = "/sub/{numberOne}/{numberTwo}", method = RequestMethod.GET)
@@ -25,21 +30,15 @@ public class MathController {
             @PathVariable(value = "numberOne") String numberOne,
             @PathVariable(value = "numberTwo") String numberTwo
     ) throws Exception {
-        if(!isNumeric(numberOne) || !isNumeric(numberTwo)) {
-            throw new UnsupportedMathOperationException("Please set a numeric value!");
-        }
-        return ConvertToDouble(numberOne) - ConvertToDouble(numberTwo);
+        return mathService.Subtracao(numberOne, numberTwo);
     }
 
     @RequestMapping(path = "/mult/{numberOne}/{numberTwo}", method = RequestMethod.GET)
-    public Double mult(
+    public Double multiplicao(
             @PathVariable(value = "numberOne") String numberOne,
             @PathVariable(value = "numberTwo") String numberTwo
     ) throws Exception {
-        if(!isNumeric(numberOne) || !isNumeric(numberTwo)) {
-            throw new UnsupportedMathOperationException("Please set a numeric value!");
-        }
-        return ConvertToDouble(numberOne) * ConvertToDouble(numberTwo);
+        return mathService.Multiplicacao(numberOne, numberTwo);
     }
 
     @RequestMapping(path = "/div/{numberOne}/{numberTwo}", method = RequestMethod.GET)
@@ -47,32 +46,14 @@ public class MathController {
             @PathVariable(value = "numberOne") String numberOne,
             @PathVariable(value = "numberTwo") String numberTwo
     ) throws Exception {
-        if(!isNumeric(numberOne) || !isNumeric(numberTwo)) {
-            throw new UnsupportedMathOperationException("Please set a numeric value!");
-        }
-        return ConvertToDouble(numberOne) / ConvertToDouble(numberTwo);
+        return mathService.Divisao(numberOne, numberTwo);
     }
 
-    @RequestMapping(path = "/sqrt/{numberOne}/{numberTwo}", method = RequestMethod.GET)
+    @RequestMapping(path = "/sqrt/{number}", method = RequestMethod.GET)
     public Double sqrt(
-            @PathVariable(value = "numberOne") String numberOne,
-            @PathVariable(value = "numberTwo") String numberTwo
+            @PathVariable(value = "number") String number
     ) throws Exception {
-        if(!isNumeric(numberOne) || !isNumeric(numberTwo)) {
-            throw new UnsupportedMathOperationException("Please set a numeric value!");
-        }
-        return Math.sqrt((ConvertToDouble(numberOne) + ConvertToDouble(numberTwo)));
+        return mathService.RaizQuadrada(number);
     }
 
-    private Double ConvertToDouble(String strNumber) {
-        if (strNumber == null) return 0D;
-        String number = strNumber.replaceAll(",", ".");
-        if(isNumeric(number)) return Double.parseDouble(number);
-        return 0D;
-    }
-    private boolean isNumeric(String strNumber) {
-        if (strNumber == null) return false;
-        String number = strNumber.replaceAll(",", ".");
-        return number.matches("[-+]?[0-9]*\\.?[0-9]+");
-    }
 }
