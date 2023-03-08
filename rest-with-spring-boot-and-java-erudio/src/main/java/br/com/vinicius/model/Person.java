@@ -14,6 +14,14 @@ public class Person implements Serializable {
     private String address;
     private String gender;
 
+    public Person(UUID id, String firstName, String lastName, String address, String gender) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.gender = gender;
+    }
+
     public Person() {
     }
 
